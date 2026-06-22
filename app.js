@@ -158,77 +158,8 @@ app.get("/leads", async (req, res) => {
   }
 });
 
-// app.post(
-//   "/leads",
-//   [
-//     body("fullName").notEmpty().withMessage("Full Name is required"),
 
-//     body("email").isEmail().withMessage("Valid Email is required"),
 
-//     body("businessName").notEmpty().withMessage("Business Name is required"),
-
-//     body("message").notEmpty().withMessage("Message is required"),
-//   ],
-
-//   async (req, res) => {
-//     try {
-//       const errors = validationResult(req);
-
-//       if (!errors.isEmpty()) {
-//         return res.status(400).json({
-//           success: false,
-//           errors: errors.array(),
-//         });
-//       }
-
-//       const { fullName, email, businessName, message } = req.body;
-
-//       // const aiResult = await qualifyLead({
-//       //   fullName,
-//       //   email,
-//       //   businessName,
-//       //   message,
-//       // });
-
-//       const result = await pool.query(
-//         `INSERT INTO leads
-//         (full_name, email, business_name, message)
-//         VALUES ($1,$2,$3,$4)
-//         RETURNING *`,
-//         [fullName, email, businessName, message]
-//       );
-
-// //       const result = await pool.query(
-// //         `
-// //       UPDATE leads
-// //       SET ai_score=$1,
-// //           ai_email_draft=$2
-// //       WHERE id=$3
-// // `,
-// //         [aiResult.score, aiResult.emailDraft, result.rows[0].id],
-// //       );
-
-//       res.status(201).json({
-//         success: true,
-//         message: "Lead saved successfully",
-//         data: result.rows[0],
-//       });
-
-//       // res.status(201).json({
-//       //   success: true,
-//       //   lead: result.rows[0],
-//       //   ai: aiResult,
-//       // });
-//     } catch (error) {
-//       console.log(error);
-
-//       res.status(500).json({
-//         success: false,
-//         message: error.message || "Server Error",
-//       });
-//     }
-//   },
-// );
 
 app.listen(5000, () => {
   console.log("Server Running on Port 5000");
