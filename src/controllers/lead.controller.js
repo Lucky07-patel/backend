@@ -148,7 +148,80 @@ const getLeads = async (req, res, next) => {
   }
 };
 
+const getDashboardStats = async (req, res, next) => {
+  try {
+    const totalResult = await pool.query(`
+      SELECT COUNT(*)::int as total
+      FROM leads
+    `);
+
+    const scoreResult = await pool.query(`
+      SELECT
+        ai_score,
+        COUNT(*)::int as count
+      FROM leads
+      GROUP BY ai_score
+    `);
+
+    const total = totalResult.rows[0].total;
+
+    let hot = 0;
+    let warm = 0;
+    let cold = 0;
+    let pending = 0;
+
+    scoreResult.rows.forEach((row) => {
+      switch (row.ai_score) {
+        case "Hot":
+          hot = row.count;
+          break;
+
+        case "Warm":
+          warm = row.count;
+          break;
+
+        case "Cold":
+          cold = row.count;
+          break;
+
+        default:
+          pending = row.count;
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalLeads: total,
+        hotLeads: hot,
+        warmLeads: warm,
+        coldLeads: cold,
+        pendingLeads: pending,
+
+        hotPercentage:
+          total > 0
+            ? ((hot / total) * 100).toFixed(1)
+            : 0,
+
+        warmPercentage:
+          total > 0
+            ? ((warm / total) * 100).toFixed(1)
+            : 0,
+
+        coldPercentage:
+          total > 0
+            ? ((cold / total) * 100).toFixed(1)
+            : 0,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createLead,
   getLeads,
+  getDashboardStats,
 };
+
